@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="/style.css">
+  
+        <title>Home</title> 
+        </head>
+        <body>
+          <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="/">Home</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                  <li class="nav-item dropdown" data-bs-theme="dark">
+                    <a class="nav-link dropdown-toggle" href="/pokeshop" role="button" data-bs-toggle="dropdown">PokéShop</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/pokeshop">Store</a></li>
+                      <li><a class="dropdown-item" href="/cart">Cart</a></li>
+                      <li><a class="dropdown-item" href="/addProduct">Add Product</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/pokedex">Pokédex</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/contact">Contact Us</a>
+                  </li> 
+                </ul>
+              </div>
+            </div>
+          </nav>
+
+          <div class="container mt-5 pt-5">
+            <div class="row mb-4">
+                <div class="text-center">
+                    <h5>Shopping Cart</h5>
+                </div>
+            <br>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Delete</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (cart.length > 0) { %>
+                            <% cart.forEach(product => { %>
+                                <tr>
+                                    <td><%= product.name %></td>
+                                    <td>
+                                        <form action="/update-cart/<%= product.cartId %>" method="POST">
+                                            <input type="number" name="quantity" value="<%= product.quantity %>" min="1">
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="/delete-from-cart/<%= product.cartId %>" method="POST">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                    <td>$<%= product.price.toFixed(2) %></td>
+                                    <td>$<%= (product.price * product.quantity).toFixed(2) %></td>
+
+                                </tr>
+                            <% }); %>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>Total Price:</strong></td>
+                                <td><strong>$<%= totalPrice.toFixed(2) %></strong></td>
+                              </tr>
+                            </tr>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">Your cart is empty.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+
+

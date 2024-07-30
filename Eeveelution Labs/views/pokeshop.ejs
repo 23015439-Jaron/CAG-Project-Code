@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <title>Pokédex</title> 
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown" data-bs-theme="dark">
+                        <a class="nav-link dropdown-toggle" href="pokeshop" role="button" data-bs-toggle="dropdown">PokéShop</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/pokeshop">Store</a></li>
+                            <li><a class="dropdown-item" href="/cart">Cart</a></li>
+                            <li><a class="dropdown-item" href="/addProduct">Add Product</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pokedex">Pokédex</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact Us</a>
+                    </li> 
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</head>
+<body>
+    <div class="container mt-5 pt-5"> 
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h5>Pokéshop</h5>
+            </div>
+            <div class="col-12 text-end">
+                <form method="GET" action="/pokeshop" class="d-flex align-items-center justify-content-end">
+                    <label for="sort" class="me-2 mb-0">Sort Product:</label>
+                    <select id="sort" name="sort" class="form-select me-2">
+                        <option value="price-asc">Price (Lowest-Highest)</option>
+                        <option value="price-desc">Price (Highest-Lowest)</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Sort</button>
+                </form>
+            </div>
+        </div>
+    
+        <div class="row">
+            <% if (products && products.length > 0) { %>
+                <% products.forEach(product => { %>
+                    <div class="col-md-3 mb-3">
+                        <div class="card" style="height: 100%;">
+                            <img src="/images/<%= product.image %>" class="card-img-top card-sizing" alt="<%= product.name %>">
+                            <div class="card-body">
+                                <h6 class="card-title"><%= product.name %></h6>
+                                <p class="card-text">Price: $<%= product.price %></p>
+                                <p class="card-text">Quantity: <%= product.quantity %></p>
+                            
+                                <!-- Quick View Button -->
+                                <button type="button" class="btn quick-view-btn mb-2" data-bs-toggle="modal" data-bs-target="#myModal<%= product.productId %>">
+                                    Edit Product
+                                </button>
+        
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal<%= product.productId %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel"><%= product.name %></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-6 mx-auto">
+                                                        <form action="/editProduct/<%= product.productId %>" method="POST" enctype="multipart/form-data">
+                                                            <div class="form-group">
+                                                                <label for="name">Product Name:</label>
+                                                                <input type="text" id="name" name="name" class="form-control" value="<%= product.name %>" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="price">Price:</label>
+                                                                <input type="text" id="price" name="price" class="form-control" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="quantity">Quantity:</label>
+                                                                <input type="number" id="quantity" name="quantity" class="form-control" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="image">Current Image:</label>
+                                                                <input type="text" name="currentImage" class="form-control" value="<%= product.image %>" required>
+                                                                <img src="/images/<%= product.image %>" width="50%">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="image">New Image:</label>
+                                                                <input type="file" id="image" name="image" accept="image/*" class="form-control-file" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <button type="submit" class="btn btn-primary mt-3">Update Product</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>      
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                    <!-- Delete Button -->
+                                    <form action="/deleteProduct/<%= product.productId %>" method="POST" style="display: inline-block;">
+                                        <button type="submit" class="btn btn-danger col-md-12" onclick="return confirm('Are you sure you want to delete this product?')">Delete Product</button>
+                                    </form>
+                                    <br>
+                                <!-- Add to Cart Form -->
+                                <form action="/add-to-cart/<%= product.productId %>" method="POST">
+                                    <div class="input-group">
+                                        <input type="number" name="quantity" class="form-control" value="1" min="1">
+                                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="col-12">
+                    <p>No products found.</p>
+                </div>
+            <% } %>
+        </div>
+        
